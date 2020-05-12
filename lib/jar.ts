@@ -103,7 +103,7 @@ export async function createPomForJars(root: string): Promise<string> {
 }
 
 export function isJar(file: string): boolean {
-  return !!file.match(/\.(([jw]ar)|(zip))$/);
+  return !!file.match(/\.(([jwa]ar)|(zip))$/);
 }
 
 export function containsJar(targetPath: string): boolean {

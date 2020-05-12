@@ -10,7 +10,9 @@ const jarsPath = path.join(fixturesPath, 'jars');
 const badPath = path.join(fixturesPath, 'bad');
 const goodAndBadPath = path.join(fixturesPath, 'good-and-bad');
 const springCorePath = path.join(fixturesPath, 'spring-core');
+const aarPath = path.join(fixturesPath, 'aar');
 const springCoreJar = 'spring-core-5.1.8.RELEASE.jar';
+const libraryAar = 'library-1.1.0.aar';
 
 test('inspect with spring-core jar file', async (t) => {
   const result = await plugin.inspect(springCorePath, springCoreJar);
@@ -18,6 +20,26 @@ test('inspect with spring-core jar file', async (t) => {
     return t.fail('expected single inspect result');
   }
   const expected = await readFixtureJSON('spring-core', 'expected.json');
+  // result.metadata depends on platform, so no fixture can be provided
+  t.ok(
+    result!.plugin!.meta!.versionBuildInfo!.metaBuildVersion!.javaVersion,
+    'should contain javaVersion key',
+  );
+  t.ok(
+    result!.plugin!.meta!.versionBuildInfo!.metaBuildVersion!.mavenVersion,
+    'should contain mavenVersion key',
+  );
+  // therefore, only independent objects are compared
+  delete result.plugin.meta;
+  t.same(result, expected, 'should return expected result');
+});
+
+test('inspect with aar file', async (t) => {
+  const result = await plugin.inspect(aarPath, libraryAar);
+  if (legacyPlugin.isMultiResult(result)) {
+    return t.fail('expected single inspect result');
+  }
+  const expected = await readFixtureJSON('aar', 'expected.json');
   // result.metadata depends on platform, so no fixture can be provided
   t.ok(
     result!.plugin!.meta!.versionBuildInfo!.metaBuildVersion!.javaVersion,
